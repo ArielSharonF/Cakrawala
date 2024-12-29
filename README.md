@@ -19,7 +19,7 @@
 This project is developed as part of **Kelompok 3 Algo 05**'s final assignment for (Algoritma dan Pemrograman) and is implemented in **C++** for its efficiency and versatility in handling structured data.
 
 **Kelompok 3 Algo05**
-1. Taufiqurrahman (24130500007)
+1. Ariel Sharon Ferdinandus (24130500007)
 2. Vienna Anselia Christie
 
 ---
@@ -88,8 +88,8 @@ This project is developed as part of **Kelompok 3 Algo 05**'s final assignment f
 ## 🚀 Usage
 -   Launch the program and log in as either **Admin** or **Staff**.
 -   Follow the interactive menu options to perform tasks based on your role:
-    -   **Manager** can manage categories and products.
-    -   **Staff** can monitor and update stock levels.
+    -   **Manager** can manage inventory, product, and monitoring transactions.
+    -   **Staff** can do orders and pay operationals.
 -   Use the corresponding menu options to input, view, and manage inventory data.
 
 
