@@ -7,7 +7,7 @@ SRC_DIR = src
 BUILD_DIR = build
 
 # Source files and output binary
-SRC_FILES = $(SRC_DIR)/main.cpp $(SRC_DIR)/item.cpp  $(SRC_DIR)/util.cpp $(SRC_DIR)/transaction.cpp $(SRC_DIR)/menu.cpp 
+SRC_FILES = $(SRC_DIR)/main.cpp $(SRC_DIR)/item.cpp  $(SRC_DIR)/util.cpp $(SRC_DIR)/transaction.cpp $(SRC_DIR)/menu.cpp $(SRC_DIR)/goods-transaction.cpp 
 OUTPUT = $(BUILD_DIR)/RMS
 
 # OS detection

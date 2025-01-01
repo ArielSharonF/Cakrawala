@@ -22,6 +22,8 @@ class Item {
         int ids[MAX_ITEM];
         string names[MAX_ITEM];
         int quantities[MAX_ITEM];
+
+        bool Validation(const string& input);
 };
 
 #endif

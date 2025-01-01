@@ -31,6 +31,20 @@ void Transaction::ViewTransactions(int currentPage, int pageSize) {
 
     int totalPages = (transactionCount + pageSize - 1) / pageSize;
 
+    // Sort the transactions by ID in descending order using Bubble Sort
+    for (int i = 0; i < transactionCount - 1; i++) {
+        for (int j = 0; j < transactionCount - 1 - i; j++) {
+            if (ids[j] < ids[j + 1]) {
+                // Swap the IDs
+                std::swap(ids[j], ids[j + 1]);
+                // Swap the corresponding values in the other arrays
+                std::swap(descriptions[j], descriptions[j + 1]);
+                std::swap(quantities[j], quantities[j + 1]);
+                std::swap(costs[j], costs[j + 1]);
+            }
+        }
+    }
+
     const int idWidth = 5;
     const int descriptionWidth = 30;
     const int quantityWidth = 15;

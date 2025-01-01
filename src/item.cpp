@@ -5,10 +5,16 @@
 #include <iomanip>
 #include <algorithm>
 #include <cctype>
+#include <regex>
 
 using namespace std;
 
 Item::Item(): itemCount(0) {}
+
+bool Item::Validation(const string& input) {
+    regex validRegex("^[a-zA-Z0-9 ]+$"); // Allows only letters, digits, and spaces
+    return regex_match(input, validRegex);
+}
 
 void Item::AddItem(const string& itemName){
     if(itemCount >= MAX_ITEM){
@@ -21,9 +27,16 @@ void Item::AddItem(const string& itemName){
         Utilities::clearScreen();
         Utilities::pressAnyKeyToContinue("Cannot add Item without name.");
         return;
+    } else if(itemName.length()<3){
+        Utilities::clearScreen();
+        Utilities::pressAnyKeyToContinue("Cannot add Item name less then 3 character.");
+        return;
+    } else if (!Validation(itemName)){
+        Utilities::clearScreen();
+        Utilities::pressAnyKeyToContinue("Item name cannot include special item.");
+        return;
     }
-
-    
+       
     string lowerCategoryName = itemName;
     transform(lowerCategoryName.begin(), lowerCategoryName.end(), lowerCategoryName.begin(), ::tolower);
 
@@ -103,8 +116,8 @@ void Item::UpdateItemsQuantity(int itemID,  int itemQTY){
             }
 
             Utilities::clearScreen();
-            string message = "Updated stock for " + names[i] + ": " + to_string(quantities[i]);
-            Utilities::pressAnyKeyToContinue(message);
+            // string message = "Updated stock for " + names[i] + ": " + to_string(quantities[i]);
+            // Utilities::pressAnyKeyToContinue(message);
             return;
         }
     }

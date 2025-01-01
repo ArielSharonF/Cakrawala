@@ -100,14 +100,6 @@ void Menu::ViewMenus(int currentPage, int pageSize) {
     cout << "Showing page " << currentPage << " of " << totalPages << endl;
 }
 
-
-// string Menu::GetMenuName(int MenuID) const {
-//     if (MenuID < 0 || MenuID >= menuCount) {
-//         return "Invalid Menu ID";
-//     }
-//     return menus[MenuID];
-// }
-
 std::string Menu::GetMenuName(int menuID) const {
     // Search for the categoryID in the ids array
     for (int i = 0; i < menuCount; ++i) {
@@ -129,10 +121,11 @@ double Menu::GetMenuPrice(int MenuID) {
     throw std::out_of_range("Category ID is out of range");
 }
 
-
 const string* Menu::GetIngredients(int MenuID) {
-    if (MenuID < 0 || MenuID >= menuCount) {
-        return nullptr;
+    for (int i = 0; i < menuCount; ++i) {
+        if (ids[i] == MenuID) {
+            return ingredients[i];
+        }
     }
-    return ingredients[MenuID];
+    return nullptr; // Return nullptr if MenuID is not found
 }

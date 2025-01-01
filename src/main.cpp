@@ -2,6 +2,8 @@
 #include "item.hpp"
 #include "transaction.hpp"
 #include "menu.hpp"
+#include "goods-transaction.hpp"
+
 
 #include <iostream>
 #include <limits>
@@ -13,16 +15,19 @@ int main(){
     Transaction transaction;
     Menu menu;
     string role;
+    GoodsTransaction goods;
 
     bool running = true;
     int currentItemPage = 1;
     int currentTransactionPage = 1;
     int currentMenuPage = 1;
+    int currentGoodsPage = 1;
     int pageSize = 5;
 
     while (running)
     {
         start:
+        cout << "Type exit to close the program" << endl;
         cout << "Who are you?(manager/staff):";
         cin >> role ;  
 
@@ -60,10 +65,13 @@ int main(){
                     cout << string(30, '=') << endl;
 
                     string itemName;
+                    cout << "" << endl;
                     cout << "Enter Item Name: ";
                     cin.ignore();
                     getline(cin, itemName);
                     item.AddItem(itemName);
+                    string Desc = "New added";
+                    goods.AddGoodsTransaction(itemName, 0, Desc);
                     Utilities::clearScreen();
                     break; 
                 }   
@@ -77,20 +85,30 @@ int main(){
                         }
 
                         item.ViewItems(currentItemPage, pageSize);
+                        goods.ViewGoodsTransaction(currentGoodsPage, pageSize);
 
                         cout << "Navigate (n: next, p: previous, q: quit): ";
                         cin >> choice;
 
                         if (choice == 'n') {
-                            if (currentItemPage < (item.itemCount + pageSize - 1) / pageSize) {
+                            if (currentItemPage < (item.itemCount + pageSize - 1) / pageSize && currentGoodsPage < (goods.goodsTransactionCount + pageSize - 1) / pageSize) {
                                 currentItemPage++;
+                                currentGoodsPage++;
+                            } else if (currentItemPage < (item.itemCount + pageSize - 1) / pageSize){
+                                currentItemPage++;
+                            } else if (currentGoodsPage < (goods.goodsTransactionCount + pageSize - 1) / pageSize){
+                                currentGoodsPage++;
                             } else {
                                 Utilities::pressAnyKeyToContinue("You are already on the last page.");
                             }
                         } else if (choice == 'p') {
-                            if (currentItemPage > 1) {
+                            if (currentItemPage > 1 && currentGoodsPage > 1) {
                                 currentItemPage--;
-                            } else {
+                                currentGoodsPage--;
+                            } else if (currentItemPage > 1){
+                                currentItemPage--;
+                            } else if (currentGoodsPage > 1){
+                                currentGoodsPage--;
                                 Utilities::pressAnyKeyToContinue("You are already on the first page.");
                             }
                         }
@@ -146,6 +164,8 @@ int main(){
                     string Desc = item.GetItemName(itemID);
                     cost = -std::abs(cost); // Convert cost to negative value
                     transaction.AddTransaction(Desc, itemQTY, cost);
+                    string reason = "Restocking";
+                    goods.AddGoodsTransaction(Desc, itemQTY, reason);
                     break;
                 }
                 case '4': {
@@ -161,28 +181,39 @@ int main(){
                     cout << "Enter menu price: ";
                     cin >> price;
 
+                    cin.ignore();
                     for (int i = 0; i < Menu::MAX_INGREDIENT; i++) {
                         cout << "Enter ingredient " << i + 1 << " (or press Enter to finish): ";
-                        cin.ignore();
-                        getline(cin, ingredients[i]);
+                        
+                        string input;
+                        getline(cin, input);
 
                         // Check if the user enters an empty string (finish input)
-                        if (ingredients[i].empty()) {
+                        if (input.empty()) {
                             break;  // Exit the loop if the user doesn't want to add more ingredients
                         }
+
+                        ingredients[i] = input;
                         ingredientCount++;
                     }
-                
+
+                    //debugging...
+                    // for (int i = 0; i < ingredientCount; i++)
+                    // {
+                    //     cout << ingredients[i];
+                    // }
+                    
                     if (ingredientCount > Menu::MAX_INGREDIENT) {
                         cout << "Too many ingredients! Limit is " << Menu::MAX_INGREDIENT << ". Only the first " << Menu::MAX_INGREDIENT << " will be used." << endl;
                         ingredientCount = Menu::MAX_INGREDIENT;
                         break;
-                    }
+                    }                    
+
                     menu.AddMenu(menuName, price, ingredients, ingredientCount);
                     break;
                 }
                 case '0':
-                    cout << "Exiting...\n";
+                    cout << "Exiting...\n\n";
                     goto start;
                 
                 default: 
@@ -244,7 +275,7 @@ int main(){
 
                     string Order = menu.GetMenuName(menuID);
                     cost = std::abs(menu.GetMenuPrice(menuID));
-                    const std::string* ingredientList = menu.GetIngredients (menuID);
+                    const std::string* ingredientList = menu.GetIngredients(menuID);
 
                     if (ingredientList) { // Check if the pointer is not null
                         for (int i = 0; i < Menu::MAX_INGREDIENT; ++i) {
@@ -256,6 +287,9 @@ int main(){
                                 } else {
                                     int decrease = -std::abs(orderQTY);
                                     item.UpdateItemsQuantity(itemID, decrease);
+                                    string itemName = item.GetItemName(itemID);
+                                    goods.AddGoodsTransaction(itemName, decrease, Order);
+                                    transaction.AddTransaction(Order, orderQTY, cost);
                                 }
                                 std::cout << ingredientList[i] << std::endl; // Print or process the ingredient
                             } else {
@@ -265,19 +299,6 @@ int main(){
                     } else {
                         std::cout << "Invalid Menu ID." << std::endl;
                     }
-                    // for (i = 0; i < /*jumlah array*/; i++){
-                    //     int itemID = item.GetItemID(ingredients[i], orderQTY);
-                    //     if (itemID == -1){
-                    //         cout << "Bahan tidak tersedia!";
-                    //         break;
-                    //     } else {
-                    //         int decrease = -std::abs(orderQTY);
-                    //         item.UpdateItemsQuantity(itemID, decrease);
-                    //     }
-                    // }
-                    
-                    transaction.AddTransaction(Order, orderQTY, cost);
-
                     break;    
                 }
                 case '2':{
@@ -295,14 +316,18 @@ int main(){
                     break;
                 }
                 case '0':
-                    cout << "Saving data and exiting...\n";
+                    cout << "Exiting...\n\n";
                     goto start;
                 
                 default: 
                     cout << "Invalid choice, please try again.\n";
                 }
-            } else {
+            } else if (role=="exit"){
+                cout << "\nShuting down...\n";
                 return 0;
+            } else {
+                cout << "\nWho are you?\n" << endl;
+                break;
             }
         }
     }
