@@ -33,7 +33,7 @@ void Item::AddItem(const string& itemName){
         return;
     } else if (!Validation(itemName)){
         Utilities::clearScreen();
-        Utilities::pressAnyKeyToContinue("Item name cannot include special item.");
+        Utilities::pressAnyKeyToContinue("Item name cannot include special character.");
         return;
     }
        
