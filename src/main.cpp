@@ -155,12 +155,20 @@ int main(){
                             break;      
                         }
                     } while (true);
+                    retry;
                     cout << "Enter quantity to add: ";
                     cin >> itemQTY;
                     cout << "Enter cost: ";
                     cin >> cost;
-                    item.UpdateItemsQuantity(itemID, itemQTY);
 
+                    if(cin.fail()) {
+                        cin.clear();
+                        cin.ignore(numeric_limits<streamsize>::max(), '\n');
+                        Utilities::pressAnyKeyToContinue("Invalid Cost. Please Try again.");
+                        goto retry;
+                    }
+                    
+                    item.UpdateItemsQuantity(itemID, itemQTY);
                     string Desc = item.GetItemName(itemID);
                     cost = -std::abs(cost); // Convert cost to negative value
                     transaction.AddTransaction(Desc, itemQTY, cost);
